@@ -28,15 +28,7 @@ function transformFilename(file) {
 	file.revOrigBase = file.base;
 	file.revHash = revHash(file.contents);
 
-	file.path = modifyFilename(file.path, (filename, extension) => {
-		const extIndex = filename.indexOf('.');
-
-		filename = extIndex === -1 ?
-			revPath(filename, file.revHash) :
-			revPath(filename.slice(0, extIndex), file.revHash) + filename.slice(extIndex);
-
-		return filename + extension;
-	});
+	file.path = revPath(file.path, file.revHash);
 }
 
 const getManifestFile = opts => vinylFile.read(opts.path, opts).catch(err => {
