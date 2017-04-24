@@ -27,8 +27,6 @@ function transformFilename(file) {
 	file.revOrigPath = file.path;
 	file.revOrigBase = file.base;
 	file.revHash = revHash(file.contents);
-
-	file.path = revPath(file.path, file.revHash);
 }
 
 const getManifestFile = opts => vinylFile.read(opts.path, opts).catch(err => {
@@ -63,6 +61,7 @@ const plugin = () => {
 
 		const oldPath = file.path;
 		transformFilename(file);
+
 		pathMap[oldPath] = file.revHash;
 
 		cb(null, file);
@@ -117,7 +116,7 @@ plugin.manifest = (pth, opts) => {
 			return;
 		}
 
-		const revisionedFile = relPath(file.base, file.path);
+		const revisionedFile = relPath(file.base, file.path) + '?v=' + file.revHash;
 		const originalFile = path.join(path.dirname(revisionedFile), path.basename(file.revOrigPath)).replace(/\\/g, '/');
 
 		manifest[originalFile] = revisionedFile;
